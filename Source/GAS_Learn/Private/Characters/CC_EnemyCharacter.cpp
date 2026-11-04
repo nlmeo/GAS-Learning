@@ -1,0 +1,34 @@
+
+#include "Characters/CC_EnemyCharacter.h"
+
+#include "AbilitySystem/CC_AbilitySystemComponent.h"
+#include "AbilitySystem/CC_AttributeSet.h"
+
+
+ACC_EnemyCharacter::ACC_EnemyCharacter()
+{
+	PrimaryActorTick.bCanEverTick = false;
+
+	AbilitySystemComponent = CreateDefaultSubobject<UCC_AbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+	AttributeSet = CreateDefaultSubobject<UCC_AttributeSet>("AttributeSet");
+
+}
+
+UAbilitySystemComponent* ACC_EnemyCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+void ACC_EnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	if (!IsValid(GetAbilitySystemComponent()) || !HasAuthority()) return;
+
+	GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
+	GiveStartupAbilities();
+	InitializeAttributes();
+	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+}
