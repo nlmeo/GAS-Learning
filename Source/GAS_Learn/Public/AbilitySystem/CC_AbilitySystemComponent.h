@@ -15,6 +15,15 @@ class GAS_LEARN_API UCC_AbilitySystemComponent : public UAbilitySystemComponent
 public:
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	virtual void OnRep_ActivateAbilities() override;
+
+	UFUNCTION(BlueprintCallable, Category = "Crash|Abilities")
+	void SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int Level);
+	
+	UFUNCTION(BlueprintCallable, Category = "Crash|Abilities")
+	void AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int AddLevel = 1);
+
 private:
 	void HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec);
+	
+	
 };

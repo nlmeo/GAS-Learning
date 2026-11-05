@@ -18,6 +18,7 @@ UAbilitySystemComponent* ACC_BaseCharacter::GetAbilitySystemComponent() const
 	return nullptr;
 }
 
+
 void ACC_BaseCharacter::GiveStartupAbilities()
 {
 	if (!IsValid(GetAbilitySystemComponent())) return;
@@ -49,3 +50,22 @@ void ACC_BaseCharacter::InitializeAttributes() const
 	// 这里假定 Spec 创建成功，SpecHandle.Data 有效。
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
+
+void ACC_BaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
+{
+	if (AttributeChangeData.NewValue <= 0.f)
+	{
+		HandleDeath();
+	}
+}
+
+void ACC_BaseCharacter::HandleDeath()
+{
+	bAlive = false;
+}
+
+void ACC_BaseCharacter::HandleRespawn()
+{
+	bAlive = true;	
+}
+

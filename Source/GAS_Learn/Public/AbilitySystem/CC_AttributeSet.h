@@ -24,7 +24,7 @@ class GAS_LEARN_API UCC_AttributeSet : public UAttributeSet
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
-
+	
 	UPROPERTY(BlueprintAssignable)
 	FAttributesInitialized OnAttributeInitialized;
 

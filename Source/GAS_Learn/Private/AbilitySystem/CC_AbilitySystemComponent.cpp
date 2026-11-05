@@ -27,6 +27,32 @@ void UCC_AbilitySystemComponent::OnRep_ActivateAbilities()
 	}
 }
 
+void UCC_AbilitySystemComponent::AddToAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int AddLevel)
+{
+	if (IsValid(GetAvatarActor()) && !GetAvatarActor()->HasAuthority()) return;
+	
+	//更改技能等级有两种方式，一种是取消当前的gameplayability在重新赋予高等级的，另一种是修改AbilitySpec的Level后MarkDirty处理
+	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
+	{
+		AbilitySpec->Level += AddLevel;
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+
+void UCC_AbilitySystemComponent::SetAbilityLevel(TSubclassOf<UGameplayAbility> AbilityClass, int Level)
+{
+	if (IsValid(GetAvatarActor()) && !GetAvatarActor()->HasAuthority()) return;
+	
+	//更改技能等级有两种方式，一种是取消当前的gameplayability在重新赋予高等级的，另一种是修改AbilitySpec的Level后MarkDirty处理
+	if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass))
+	{
+		AbilitySpec->Level = Level;
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+
 void UCC_AbilitySystemComponent::HandleAutoActivatedAbility(const FGameplayAbilitySpec& AbilitySpec)
 {
 	for (const FGameplayTag& Tag : AbilitySpec.Ability->GetAssetTags())
