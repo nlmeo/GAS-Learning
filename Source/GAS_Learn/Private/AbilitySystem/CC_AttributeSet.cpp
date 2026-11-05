@@ -3,10 +3,12 @@
 
 #include "AbilitySystem/CC_AttributeSet.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
+#include "GameplayTags/CC_Tags.h"
 #include "Net/UnrealNetwork.h"
 
-void UCC_AttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+void UCC_AttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, Health, COND_None, REPNOTIFY_Always);
@@ -17,15 +19,26 @@ void UCC_AttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 
 }
 
-void UCC_AttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+void UCC_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
+	
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute() && GetHealth() <= 0.f)
+	{
+		FGameplayEventData PlayLoad;
+		PlayLoad.Instigator = Data.Target.GetAvatarActor(); //受到攻击的对象,下方为发起攻击的对象
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.EffectSpec.GetEffectContext().GetInstigator(),CC_Tags::Events::KillScore,PlayLoad);
+	}
+	
 	if (!bAttributesInitialized)
 	{
 		bAttributesInitialized = true;
 		OnAttributeInitialized.Broadcast();
 	}
-
+	
+	
+	
+	
 }
 
 void UCC_AttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)

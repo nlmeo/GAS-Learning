@@ -21,6 +21,7 @@ class GAS_LEARN_API ACC_BaseCharacter : public ACharacter, public IAbilitySystem
 
 public:
 	ACC_BaseCharacter();
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override; 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSet() const {return nullptr;};
 	bool IsAlive() const {return bAlive;}
@@ -31,6 +32,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Crash|Death")
 	virtual void HandleRespawn();
+	
+	UFUNCTION(BlueprintCallable, Category = "Crash|Reset")
+	void ResetAttributes() const;
 protected:
 	void GiveStartupAbilities();
 	void InitializeAttributes() const;
@@ -45,6 +49,9 @@ private:
 	UPROPERTY(EditdefaultsOnly, Category="Crash|Effects")
 	TSubclassOf<UGameplayEffect> InitializeAttributesEffect;
 
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditdefaultsOnly, Category="Crash|Effects")
+	TSubclassOf<UGameplayEffect> ResetAttributesEffect;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Replicated)
 	bool bAlive = true;
 };

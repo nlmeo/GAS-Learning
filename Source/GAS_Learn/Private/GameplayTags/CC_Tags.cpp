@@ -15,5 +15,7 @@ namespace CC_Tags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HitReact,"CC_Tags.Events.Enemy.HitReact", "Tag for the Enemy HitReact Event.");
 		}
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(KillScore,"CC_Tags.Events.KillScore", "Tag for the KillScore Event.");
+
 	}
 }

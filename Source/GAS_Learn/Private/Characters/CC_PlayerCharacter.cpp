@@ -72,11 +72,15 @@ void ACC_PlayerCharacter::PossessedBy(AController* EventController)
 	// 授予初始技能、应用初始属性效果由服务器负责，相关结果再通过 GAS 复制给客户端。
 	GiveStartupAbilities();
 	InitializeAttributes();
-
 	// 通知服务器本地的监听者：ASC 已完成这里的初始化，可以绑定属性变化等回调。
 	// 监听服务器上的本地玩家 UI 也可能依赖此通知。
 	// Broadcast 是本地委托调用，不是 RPC，不会自动通知远程客户端的监听者。
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+
+	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
+	if (!IsValid(CC_AttributeSet)) return;
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	
 }
 
 // 客户端的 PlayerState 引用复制更新时调用（不保证一生只调用一次）。
@@ -91,4 +95,9 @@ void ACC_PlayerCharacter::OnRep_PlayerState()
 	// 两处广播分别服务于服务器和客户端各自的对象实例，并非向同一批监听者固定广播两次。
 	// 此通知只表示本地 ASC ActorInfo 已就绪，不保证服务器的初始属性值此刻已全部复制到达。
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
+	
+	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(GetAttributeSet());
+	if (!IsValid(CC_AttributeSet)) return;
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	
 }

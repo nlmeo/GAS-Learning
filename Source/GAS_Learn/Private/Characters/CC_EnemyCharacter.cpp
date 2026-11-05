@@ -33,10 +33,7 @@ void ACC_EnemyCharacter::BeginPlay()
 	
 	UCC_AttributeSet* CC_AttributeSet = Cast<UCC_AttributeSet>(AttributeSet);
 	if (!IsValid(CC_AttributeSet)) return;
-	
-	
 	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(CC_AttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
-	
 	
 	OnASCInitialized.Broadcast(GetAbilitySystemComponent(), GetAttributeSet());
 }
