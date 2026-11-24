@@ -7,7 +7,10 @@ void UCC_GameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
 {
-	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	if (bActivateBlueprintOnActivation)
+	{
+		Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	}
 
 	if (bDrawDebugs && IsValid(GEngine))
 	{

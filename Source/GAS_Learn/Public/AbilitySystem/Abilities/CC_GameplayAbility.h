@@ -16,4 +16,8 @@ public:
 	bool bDrawDebugs = false;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+protected:
+	// 原生实现可关闭蓝图激活入口，避免迁移后同时运行旧事件图。
+	bool bActivateBlueprintOnActivation = true;
+
 };

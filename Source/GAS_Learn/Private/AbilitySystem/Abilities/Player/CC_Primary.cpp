@@ -8,6 +8,20 @@
 #include "GameplayTags/CC_Tags.h"
 
 
+
+void UCC_Primary::SendHitReactEventToActors(const TArray<AActor*>& HitActors)
+{
+	for (AActor* HitActor : HitActors)
+	{
+		if(!IsValid(HitActor)) continue;
+
+		FGameplayEventData PayLoad;
+		PayLoad.Instigator = GetAvatarActorFromActorInfo();
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, CC_Tags::Events::Enemy::HitReact,PayLoad);
+	}
+}
+
+/**
 TArray<AActor*> UCC_Primary::HitBoxOverlapTest()
 {
 	TArray<AActor*> ActorsToIgnore;
@@ -45,18 +59,6 @@ TArray<AActor*> UCC_Primary::HitBoxOverlapTest()
 
 }
 
-void UCC_Primary::SendHitReactEventToActors(const TArray<AActor*>& HitActors)
-{
-	for (AActor* HitActor : HitActors)
-	{
-		if(!IsValid(HitActor)) continue;
-
-		FGameplayEventData PayLoad;
-		PayLoad.Instigator = GetAvatarActorFromActorInfo();
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, CC_Tags::Events::Enemy::HitReact,PayLoad);
-	}
-}
-
 void UCC_Primary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapResults, const FVector& HitBoxLocation) const
 {
 	DrawDebugSphere(GetWorld(),HitBoxLocation,HitBoxRadius,16,FColor::Red,false,3.f);
@@ -70,3 +72,4 @@ void UCC_Primary::DrawHitBoxOverlapDebugs(const TArray<FOverlapResult>& OverlapR
 		}
 	}
 }
+*/

@@ -18,12 +18,14 @@ public class GAS_Learn : ModuleRules
 			"GameplayAbilities",
 			"GameplayTags",
 			"GameplayTasks",
-			"UMG"
+			"UMG", "AIModule"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"GameplayAbilities"
+			"GameplayAbilities",
+			"GameplayTags",
+			"AIModule"
 		});
 
 

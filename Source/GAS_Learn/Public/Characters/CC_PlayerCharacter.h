@@ -9,7 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 
-UCLASS()
+UCLASS(BlueprintType)
 class GAS_LEARN_API ACC_PlayerCharacter : public ACC_BaseCharacter
 {
 	GENERATED_BODY()

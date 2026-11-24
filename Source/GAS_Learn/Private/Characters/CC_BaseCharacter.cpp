@@ -2,7 +2,17 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilitySpec.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
+
+
+namespace CrashTags
+{
+	const FName PlayerTag = FName("Player");
+	const FName EnemyTag = FName("Enemy");
+}
+
 
 
 ACC_BaseCharacter::ACC_BaseCharacter()
@@ -60,9 +70,24 @@ void ACC_BaseCharacter::InitializeAttributes() const
 
 void ACC_BaseCharacter::ResetAttributes() const
 {
-	FGameplayEffectContextHandle ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
-	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	// 属性重置只在服务器执行；死亡任务取消时，角色可能已经解除控制或正在销毁。
+	if (!HasAuthority()) return;
+	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	if (!IsValid(ASC))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s: ResetAttributes skipped because ASC is unavailable (Controller=%s, PlayerState=%s)."),
+			*GetName(), *GetNameSafe(GetController()), *GetNameSafe(GetPlayerState()));
+		return;
+	}
+	if (!IsValid(ResetAttributesEffect))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s: ResetAttributesEffect is not set."), *GetName());
+		return;
+	}
+
+	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
 void ACC_BaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData)
@@ -76,7 +101,7 @@ void ACC_BaseCharacter::OnHealthChanged(const FOnAttributeChangeData& AttributeC
 void ACC_BaseCharacter::HandleDeath()
 {
 	bAlive = false;
-	
+
 	if (IsValid(GEngine))
 	{
 		GEngine->AddOnScreenDebugMessage(-1,3.f,FColor::Red,FString::Printf(TEXT("%s has died"),*GetName()));
@@ -85,6 +110,5 @@ void ACC_BaseCharacter::HandleDeath()
 
 void ACC_BaseCharacter::HandleRespawn()
 {
-	bAlive = true;	
+	bAlive = true;
 }
-

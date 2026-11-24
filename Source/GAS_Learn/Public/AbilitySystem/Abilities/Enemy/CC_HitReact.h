@@ -21,7 +21,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Crash|Abilities")
 	FVector AvatarForward;
 
-
 	UPROPERTY(BlueprintReadOnly, Category="Crash|Abilities")
 	FVector ToInstigator;
 };
