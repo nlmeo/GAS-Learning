@@ -87,6 +87,7 @@ void ACC_BaseCharacter::ResetAttributes() const
 
 	FGameplayEffectContextHandle ContextHandle = ASC->MakeEffectContext();
 	FGameplayEffectSpecHandle SpecHandle = ASC->MakeOutgoingSpec(ResetAttributesEffect, 1.f, ContextHandle);
+	if (!SpecHandle.IsValid()) return;
 	ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
@@ -110,5 +111,23 @@ void ACC_BaseCharacter::HandleDeath()
 
 void ACC_BaseCharacter::HandleRespawn()
 {
+	if (!HasAuthority())
+	{
+		// 只有拥有角色的客户端可以发送服务器 RPC；模拟代理等待复制。
+		if (IsLocallyControlled()) ServerHandleRespawn();
+		return;
+	}
+
+	// 同一死亡流程可能同时收到服务器和客户端的蒙太奇结束回调。
+	// 必须在恢复存活状态之前重置属性，后续请求才不会再次回血回蓝。
+	if (bAlive) return;
+	ResetAttributes();
 	bAlive = true;
+	ForceNetUpdate();
+}
+
+void ACC_BaseCharacter::ServerHandleRespawn_Implementation()
+{
+	// 使用虚函数入口，保留敌人等子类的服务器重生逻辑。
+	HandleRespawn();
 }

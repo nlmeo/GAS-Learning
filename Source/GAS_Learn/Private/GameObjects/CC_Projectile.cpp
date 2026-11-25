@@ -4,6 +4,7 @@
 #include "GameObjects/CC_Projectile.h"
 
 #include "Characters/CC_PlayerCharacter.h"
+#include "Characters/CC_EnemyCharacter.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameplayTags/CC_Tags.h"
 #include "Utils/CC_BlueprintLibrary.h"
@@ -16,6 +17,24 @@ ACC_Projectile::ACC_Projectile()
 	SetReplicateMovement(true);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
+}
+
+void ACC_Projectile::BeginPlay()
+{
+	Super::BeginPlay();
+	if (!HasAuthority()) return;
+	const ACC_EnemyCharacter* Enemy = Cast<ACC_EnemyCharacter>(Shooter);
+	if (!IsValid(Enemy) || !IsValid(Enemy->AimTarget)) return;
+	const ACC_BaseCharacter* Target = Cast<ACC_BaseCharacter>(Enemy->AimTarget);
+	if (Target && !Target->IsAlive()) return;
+	// 瞄准角色中心，保留高度差；只修正初始方向，不做追踪弹。
+	const FVector Direction = (Enemy->AimTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+	if (Direction.IsNearlyZero()) return;
+	const float Speed = ProjectileMovement->Velocity.Size() > UE_SMALL_NUMBER
+		? ProjectileMovement->Velocity.Size() : ProjectileMovement->InitialSpeed;
+	SetActorRotation(Direction.Rotation());
+	ProjectileMovement->Velocity = Direction * Speed;
+	ForceNetUpdate();
 }
 
 void ACC_Projectile::NotifyActorBeginOverlap(AActor* OtherActor)

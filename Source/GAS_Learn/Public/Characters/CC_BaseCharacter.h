@@ -55,6 +55,9 @@ protected:
 	void OnHealthChanged(const FOnAttributeChangeData& AttributeChangeData);
 	virtual void HandleDeath();
 private:
+	// 客户端死亡技能的动画回调需要将重生交给服务器完成。
+	UFUNCTION(Server, Reliable)
+	void ServerHandleRespawn();
 
 	UPROPERTY(EditdefaultsOnly, Category="Crash|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;

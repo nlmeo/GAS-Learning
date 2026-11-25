@@ -122,6 +122,7 @@ void UCC_SearchFortarget::Search()
 	FClosestActorWithTagResult Result= UCC_BlueprintLibrary::FindClosestActorWithTag(OwningEnemy.Get(),OwningEnemy->GetActorLocation(),CrashTags::PlayerTag);
 
 	TargetCharacter = Cast<ACC_BaseCharacter>(Result.Actor);
+	OwningEnemy->AimTarget = TargetCharacter.Get();
 	if (!TargetCharacter.IsValid())
 	{
 		StartSearch();
@@ -250,6 +251,7 @@ void UCC_SearchFortarget::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	MoveTask.Reset();
 	TargetCharacter.Reset();
+	if (OwningEnemy.IsValid()) OwningEnemy->AimTarget = nullptr;
 
 	if (IsValid(WaitGameplayEventTask))
 	{

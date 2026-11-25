@@ -2,13 +2,18 @@
 
 
 #include "Utils/CC_BlueprintLibrary.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/CC_BaseCharacter.h"
-#include "Characters/CC_PlayerCharacter.h"
 #include "Engine/OverlapResult.h"
 #include "GameplayTags/CC_Tags.h"
 #include "Kismet/GameplayStatics.h"
+
+
+FRotator UCC_BlueprintLibrary::FindHorizontalLookAtRotation(const FVector& Start, const FVector& Target)
+{
+	const FVector Direction(Target.X - Start.X, Target.Y - Start.Y, 0.0);
+	return FRotator(0.0, Direction.Rotation().Yaw, 0.0);
+}
 
 
 EHitDirection UCC_BlueprintLibrary::GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator)

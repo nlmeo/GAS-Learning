@@ -16,6 +16,7 @@ class GAS_LEARN_API ACC_Projectile : public AActor
 
 public:
 	ACC_Projectile();
+	virtual void BeginPlay() override;
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 

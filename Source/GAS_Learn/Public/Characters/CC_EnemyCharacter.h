@@ -14,6 +14,8 @@ class GAS_LEARN_API ACC_EnemyCharacter : public ACC_BaseCharacter
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(Replicated, BlueprintReadOnly, Category="Crash|Aim")
+	TObjectPtr<AActor> AimTarget;
 
 	ACC_EnemyCharacter();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

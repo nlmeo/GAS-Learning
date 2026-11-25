@@ -8,7 +8,6 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "CC_BlueprintLibrary.generated.h"
 
-
 UENUM(BlueprintType)
 enum class EHitDirection : uint8
 {
@@ -40,6 +39,9 @@ class GAS_LEARN_API UCC_BlueprintLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 public:
+	// 地面角色只水平转向；目标高度差交给上半身瞄准处理。
+	UFUNCTION(BlueprintPure, Category="Crash|Aim")
+	static FRotator FindHorizontalLookAtRotation(const FVector& Start, const FVector& Target);
 
 	UFUNCTION(BlueprintPure)
 	static EHitDirection GetHitDirection(const FVector& TargetForward, const FVector& ToInstigator);
@@ -55,7 +57,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SendDamageEventToPlayers(TArray<AActor*> Targets, const TSubclassOf<UGameplayEffect>& DamageEffect,UPARAM(ref) FGameplayEventData& Payload, const FGameplayTag& DataTag, float DamageNumber,const FGameplayTag& EventTagOverride, UObject* OptionalParticleSystem = nullptr);
-
 
 	UFUNCTION(BlueprintCallable)
 	static TArray<AActor*> HitBoxOverlapTest(AActor* Target, float HitBoxRadius, float HitBoxForwardOffset, float HitBoxElevationOffset,bool bDrawDebugs = false);

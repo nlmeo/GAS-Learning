@@ -93,6 +93,7 @@ void ACC_EnemyCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ThisClass, bIsBeingLaunched);
+	DOREPLIFETIME(ThisClass, AimTarget);
 }
 
 void ACC_EnemyCharacter::RestartSearchAbility()
